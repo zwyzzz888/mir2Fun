@@ -43,6 +43,12 @@ def case_auto_pick():                            # 自动拾取
         print('case_auto_pick开启')
 
 
+def case_off():                            # 小退关闭标识
+    print('小退')
+    global flag_case_case_auto_pick
+    flag_case_case_auto_pick = False
+
+
 def case_auto_death_pic():                            # 自动死亡截图
     print('死亡截图')
     global flag_case_death_pic
@@ -66,7 +72,7 @@ def auto_pick_shidao(hd):   # 自动练习技能 道士会换符
     global flag_case_train_skill_taoist
     global flag_train_skill_taoist_windows
     if flag_case_train_skill_taoist and (hd == flag_train_skill_taoist_windows):
-        time.sleep(1)
+        time.sleep(5)
         mirFun.train_skill_f8(hd, pos_case_train_skill_normal)
 
 
@@ -107,6 +113,7 @@ def case_train_skill_taoist():                            # 可以自动换符�
         flag_case_train_skill_taoist = True
         pos_case_train_skill_normal = mirFun.getCurPos()
         flag_train_skill_taoist_windows = mirFun.get_foreground_windows()
+        # mirFun.temp_size(flag_train_skill_taoist_windows)
         print('train_skill_f8开启')
 
 
@@ -130,6 +137,7 @@ switch = {"'m'": case_sell_or_save,                # 注意此处不要加括号
 def run_someting(key_str):     # 执行方法
     # 如果激活的是当前的窗口再执行方法  可以多开
     if len(hd_list) > 0 and hd_list[0] == mirFun.get_foreground_windows():
+        # print("key_str=" + key_str)
         if "'m'" == key_str:
             case_sell_or_save()
         elif "Key.f7" == key_str:
@@ -140,6 +148,8 @@ def run_someting(key_str):     # 执行方法
             case_auto_pick()
         elif "Key.f11" == key_str:
             case_auto_death_pic()
+        elif "'x'" == key_str:
+            case_off()
     elif "Key.f12" == key_str:
         init_hd()
 
