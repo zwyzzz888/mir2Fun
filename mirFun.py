@@ -240,6 +240,15 @@ def get_foreground_windows():
     return win32gui.GetForegroundWindow()
 
 
+def temp_size(hd):
+    win32gui.GetForegroundWindow()
+    # win32gui.MoveWindow(hd, 0, 0, 1024, 780, True)
+    pri = win32gui.GetWindowLong(hd,win32con.GWL_EXSTYLE)
+
+    win32gui.SetWindowLong(hd, win32con.GWL_EXSTYLE, win32con.WS_CAPTION)
+    win32gui.SetWindowPos(hd, None, 0,0,0,0, 127)
+
+
 def mouse_move_and_click(pos):  # 前台移动鼠标
     win32api.SetCursorPos(pos)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, pos[0], pos[1], 0, 0)
@@ -295,14 +304,15 @@ def train_skill_f8(hwnd, pos):
         move_x = int(x)
         move_y = int(y)
         click_it((move_x, move_y), hwnd)          # 这里双击调试了半天 最后还是不知道怎么实现的 反正就是成功了,虽然不知道逻辑是什么但是功能实现了O.O
-        time.sleep(0.1)
+        click_it_double((move_x, move_y), hwnd)
+        time.sleep(0.2)
         click_it_double((move_x, move_y), hwnd)
         click_it((move_x, move_y), hwnd)
     click_it_key(pos, hwnd, win32con.VK_F8)
 
 
 def get_death_pic(hwnd):
-    time.sleep(2)
+    time.sleep(3)
     baseImg = "./pic/blackground.jpg"  # 储存的文件名  # 储存的文件名
     rect = win32gui.GetWindowRect(hwnd)
     window_capture_small(baseImg, hwnd)  # 对整个屏幕截图，并保存截图为baseImg
