@@ -308,7 +308,8 @@ def train_skill_f8(hwnd, pos):
         time.sleep(0.2)
         click_it_double((move_x, move_y), hwnd)
         click_it((move_x, move_y), hwnd)
-    click_it_key(pos, hwnd, win32con.VK_F8)
+    # click_it_key(pos, hwnd, win32con.VK_F8)
+    time.sleep(5)
 
 
 def get_death_pic(hwnd):

@@ -68,12 +68,17 @@ def auto_pick_nomarl(hd):   # 自动练习技能 诱惑bb之类的
         mirFun.train_skill_f7(hd, pos_case_train_skill_normal)
 
 
+def run_train_skill_f8(hd):   # 线程要执行的方法 自动道士会换符
+    while flag_case_train_skill_taoist:
+        mirFun.train_skill_f8(hd, pos_case_train_skill_normal)
+
+
 def auto_pick_shidao(hd):   # 自动练习技能 道士会换符
     global flag_case_train_skill_taoist
     global flag_train_skill_taoist_windows
     if flag_case_train_skill_taoist and (hd == flag_train_skill_taoist_windows):
-        time.sleep(5)
-        mirFun.train_skill_f8(hd, pos_case_train_skill_normal)
+        t = threading.Thread(target=run_train_skill_f8, args=(hd,))
+        t.start()
 
 
 def run_get_death_pic(hd):   # 线程要执行的方法 自动死亡截图
@@ -114,6 +119,7 @@ def case_train_skill_taoist():                            # 可以自动换符�
         pos_case_train_skill_normal = mirFun.getCurPos()
         flag_train_skill_taoist_windows = mirFun.get_foreground_windows()
         # mirFun.temp_size(flag_train_skill_taoist_windows)
+        auto_pick_shidao(hd_list[0])
         print('train_skill_f8开启')
 
 
@@ -247,5 +253,5 @@ if __name__ == '__main__':
         for hd in hd_list:
             auto_pick(hd)
             auto_pick_nomarl(hd)
-            auto_pick_shidao(hd)
+            # auto_pick_shidao(hd)
         pass
