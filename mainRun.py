@@ -8,6 +8,7 @@ import mirFun
 # Key.alt_l    m    Key.f8
 flag_case_train_skill_normal = False  # 练习普通技能状态标识
 flag_case_train_skill_taoist = False  # 练习道士技能状态标识 需要换符
+flag_case_auto_run_romdon = False  # 随便跑步开关
 global flag_train_skill_taoist_windows
 global flag_run_windows
 flag_case_case_auto_pick = False  # 自动拾取状态标识
@@ -17,6 +18,7 @@ pos_case_train_skill_normal = []
 pos_case_run = []
 record_key = []  # 临时记录按键,用于检测当前按键组合键
 hd_list = []  # 记录窗口句柄
+
 
 
 def case_sell_or_save():                            # 自动卖东西
@@ -47,7 +49,8 @@ def case_off():                            # 小退关闭标识
     print('小退')
     global flag_case_case_auto_pick
     flag_case_case_auto_pick = False
-
+    global flag_case_auto_run_romdon
+    flag_case_auto_run_romdon = False
 
 def case_auto_death_pic():                            # 自动死亡截图
     print('死亡截图')
@@ -73,11 +76,21 @@ def run_train_skill_f8(hd):   # 线程要执行的方法 自动道士会换符
         mirFun.train_skill_f8(hd, pos_case_train_skill_normal)
 
 
+def run_auto_run_random(hd):   # 线程要执行的方法 自动跑路
+    while flag_case_auto_run_romdon:
+        mirFun.auto_run_random(hd)
 def auto_pick_shidao(hd):   # 自动练习技能 道士会换符
     global flag_case_train_skill_taoist
     global flag_train_skill_taoist_windows
     if flag_case_train_skill_taoist and (hd == flag_train_skill_taoist_windows):
         t = threading.Thread(target=run_train_skill_f8, args=(hd,))
+        t.start()
+
+def auto_run_random(hd):   # 自动跑路
+    global flag_case_auto_run_romdon
+    global flag_train_skill_taoist_windows
+    if flag_case_auto_run_romdon :
+        t = threading.Thread(target=run_auto_run_random, args=(hd,))
         t.start()
 
 
@@ -123,6 +136,21 @@ def case_train_skill_taoist():                            # 可以自动换符�
         print('train_skill_f8开启')
 
 
+
+def case_auto_run_random():                            # 自动跑路
+    print('auto_run_random')
+    global flag_case_auto_run_romdon
+    global pos_case_train_skill_normal
+    if flag_case_auto_run_romdon:
+        flag_case_auto_run_romdon = False
+        print('auto_run_random关闭')
+    else:
+        flag_case_auto_run_romdon = True
+        pos_case_train_skill_normal = mirFun.getCurPos()
+        # mirFun.temp_size(flag_train_skill_taoist_windows)
+        auto_run_random(hd_list[0])
+        print('auto_run_random开启')
+
 def auto_run(hd):   # 自动选择方向奔跑
     global flag_case_run
     if flag_case_run:
@@ -137,6 +165,7 @@ switch = {"'m'": case_sell_or_save,                # 注意此处不要加括号
           "'Key.f7'": case_train_skill_nomorl,
           "'Key.f8'": case_train_skill_taoist,
           "'Key.esc'": case_train_skill_taoist,
+          "'Key.f10'": case_auto_run_random,
           }
 
 
@@ -154,6 +183,8 @@ def run_someting(key_str):     # 执行方法
             case_auto_pick()
         elif "Key.f11" == key_str:
             case_auto_death_pic()
+        elif "Key.f10" == key_str:
+            case_auto_run_random()
         elif "'x'" == key_str:
             case_off()
     elif "Key.f12" == key_str:
@@ -244,8 +275,9 @@ if __name__ == '__main__':
     print("如果多开，就依次开游戏再依次启动多个本程序，使用快捷键时候，保证游戏窗口激活再按功能快捷键")
     print("alt + esc 自动显示物品，拾取物品，其实就是不停的按esc，如果组队的时候需要临时关闭，再按次就关闭，以下同理")
     print("alt + f7  自动训练技能，把技能设置为f7键释放，鼠标指向需要释放的地方，按下即可，再按停止，只能适合诱惑等技能，不适合道士需要换符的技能")
-    print("alt + f8  (启动时窗口需要在前台)自动训练道士换符技能，同上技能设置为f8，打开包裹，包裹里面装好符")
+    print("alt + f8  5s换一次符，设置为f8，打开包裹，包裹里面装好符，物品窗口拖动到右边，点开人物窗口再关闭，配合f7使用")
     print("alt + m  (启动时窗口需要在前台)自动卖、存、修 物品， 点开卖、修、仓库保管窗口后，鼠标指向物品 按快捷键即可")
+    print("alt + f10 随机行走(可以后台)")
     while True:  # 这里应该用一个循环维持主线程，否则主线程结束了子线程就自动结束了，只是为了
         # 注意电脑也是需要缓冲的，不可一下子同时点击又打字又松开，中间可适当用time.sleep()函数来进行缓冲。
         time.sleep(0.02)  # 缓冲0.01s

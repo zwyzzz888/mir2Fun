@@ -1,6 +1,8 @@
 import os
 import sys
 
+from datetime import datetime
+import random
 import win32api
 import win32gui
 import win32ui
@@ -9,6 +11,7 @@ import aircv as ac
 from ctypes import windll
 import time
 
+flag_random = True
 
 def clickLeftCur():
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN | win32con.MOUSEEVENTF_LEFTUP, 0, 0)
@@ -87,9 +90,9 @@ def click_it_key(pos, hd, key):
 
 def click_key(hd, key):
     handle = hd
-    win32gui.SendMessage(handle, win32con.WM_ACTIVATE, win32con.WA_ACTIVE, 0)
-    win32gui.SendMessage(handle, win32con.WM_KEYDOWN, key, 0)
-    win32gui.SendMessage(handle, win32con.WM_KEYUP, key, 0)
+    win32gui.PostMessage(handle, win32con.WM_ACTIVATE, win32con.WA_ACTIVE, 0)
+    win32gui.PostMessage(handle, win32con.WM_KEYDOWN, key, 0)
+    win32gui.PostMessage(handle, win32con.WM_KEYUP, key, 0)
 
 
 def click_key_esc(hd):
@@ -123,9 +126,14 @@ def getCurPos():  # 获得鼠标位置信息，这个再实际代码没用上，
     return win32gui.GetCursorPos()
 
 
-def dragCur(param, hd):
+def dragCur(param, hd):  # 鼠标右键点击
     leftDown((param[0], param[1]), hd)
     leftUp((param[0], param[1]), hd)
+
+
+def dragCurRight(param, hd):  # 鼠标右键点击
+    rightDown((param[0], param[1]), hd)
+    rightUp((param[0], param[1]), hd)
 
 
 def match_img(imgsrc, imgobj, confidence):  # imgsrc=原始图像，imgobj=待查找的图片
@@ -286,7 +294,8 @@ def train_skill_f7(hwnd, pos):
 def train_skill_f8(hwnd, pos):
     baseImg = "./pic/blackground.jpg"  # 储存的文件名  # 储存的文件名
     rect = win32gui.GetWindowRect(hwnd)
-    window_capture(baseImg, hwnd)  # 对整个屏幕截图，并保存截图为baseImg
+    # window_capture(baseImg, hwnd)  # 对整个屏幕截图，并保存截图为baseImg
+    window_capture_small(baseImg, hwnd)  # 对整个屏幕截图，并保存截图为baseImg
     # 遍历所有图片
     for filename in os.listdir(r"./pic/images"):  # listdir的参数是文件夹的路径
         imagePath = "./pic/images/" + filename
@@ -308,7 +317,11 @@ def train_skill_f8(hwnd, pos):
         time.sleep(0.2)
         click_it_double((move_x, move_y), hwnd)
         click_it((move_x, move_y), hwnd)
-    # click_it_key(pos, hwnd, win32con.VK_F8)
+    imagePath2 = "./pic/" + "kulou.png"
+    res2 = match_img(baseImg, imagePath2, 0.8)
+    if res2 is None:
+        print("骷髅没找到")
+        click_it_key(pos, hwnd, win32con.VK_F8)
     time.sleep(5)
 
 
@@ -331,11 +344,70 @@ def get_death_pic(hwnd):
         os._exit(0)
 
 
+pos_randomX = [504, 601, 622, 588, 501, 407, 391, 415]
+pos_randomY = [233, 281, 358, 416, 432, 404, 350, 277]
+
+
+def auto_run_random(hwnd):
+   rect = win32gui.GetWindowRect(hwnd)
+   #  选择一个随即方向
+   random_number = random.randint(0, 7)
+   #  TODO 优化随即方式 让移动范围更大
+   x = rect[0] + pos_randomX[random_number]
+   y = rect[1] + pos_randomY[random_number]
+   if random_number == 7:
+       random_number = 0
+   else:
+       random_number = random_number + 1
+   x2 = rect[0] + pos_randomX[random_number]
+   y2 = rect[1] + pos_randomY[random_number]
+   #  随即走的步数
+   step_num = random.randint(15, 40)
+   for i in range(step_num):
+    if check_odd_even(i):  # 走两步 一拐弯
+        dragCurRight((x, y), hwnd)
+    else:
+        dragCurRight((x2, y2), hwnd)
+    time.sleep(0.8)
+    #  判断下是否要使用随即
+    global flag_random
+    if bool_run_random(get_current_min()) == 1 and flag_random:  # 当时间的分钟为5的倍数时候,并且标记为True 按6使用随即 同时将标记置为False
+        click_key(hwnd, 54) # 6是54 搜索虚拟键码对照表
+        flag_random = False
+        print("test bool_run_random随即了" + str(get_current_min()) + str(flag_random))
+    elif bool_run_random(get_current_min()) == 2 and not flag_random:  # 当时间的分钟为5的倍数+1的时候,并且标记为False,将标记置为True,以便下次继续随即
+        flag_random = True
+        print("test bool_run_random恢复了" + str(get_current_min()) + str(flag_random))
+
+
+def check_odd_even(number):
+    if number % 3 == 0:
+        return True
+    else:
+        return False
+
+
+def bool_run_random(number):
+    if number % 15 == 0:
+        return 1
+    elif number % 15 == 1:
+        return 2
+    else:
+        return 0
+
+# 获取当前时间分钟数
+def get_current_min():
+    current_time = datetime.now()
+    # 提取分钟数
+    return current_time.minute
+
+
 def loop(hwnd):
     rect = win32gui.GetWindowRect(hwnd)
     # 鼠标坐标加去指定窗口坐标为鼠标在窗口中的坐标值
     move_x = rect[0] + 840
     move_y = rect[1] + 335
+    print("鼠标坐标加去指定窗口坐标为鼠标在窗口中的坐标值")
     print(move_x, move_y)
     click_it((move_x, move_y), hwnd)
 
