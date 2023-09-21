@@ -402,6 +402,10 @@ def get_current_min():
     return current_time.minute
 
 
+def set_light(hd):
+    win32api.SetDllDirectory()
+
+
 def loop(hwnd):
     rect = win32gui.GetWindowRect(hwnd)
     # 鼠标坐标加去指定窗口坐标为鼠标在窗口中的坐标值
