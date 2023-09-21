@@ -365,6 +365,7 @@ def auto_run_random(hwnd, event):
    step_num = random.randint(15, 40)
    for i in range(step_num):
     if event.is_set():  # 中断线程用
+        print("中断线程用")
         return
     if check_odd_even(i):  # 走两步 一拐弯
         dragCurRight((x, y), hwnd)
