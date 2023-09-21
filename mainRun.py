@@ -76,9 +76,11 @@ def run_train_skill_f8(hd):   # 线程要执行的方法 自动道士会换符
         mirFun.train_skill_f8(hd, pos_case_train_skill_normal)
 
 
-def run_auto_run_random(hd):   # 线程要执行的方法 自动跑路
+def run_auto_run_random(hd, event):   # 线程要执行的方法 自动跑路
     while flag_case_auto_run_romdon:
-        mirFun.auto_run_random(hd)
+        mirFun.auto_run_random(hd, event)
+
+
 def auto_pick_shidao(hd):   # 自动练习技能 道士会换符
     global flag_case_train_skill_taoist
     global flag_train_skill_taoist_windows
@@ -86,13 +88,15 @@ def auto_pick_shidao(hd):   # 自动练习技能 道士会换符
         t = threading.Thread(target=run_train_skill_f8, args=(hd,))
         t.start()
 
+
 def auto_run_random(hd):   # 自动跑路
     global flag_case_auto_run_romdon
-    global flag_train_skill_taoist_windows
-    if flag_case_auto_run_romdon :
-        t = threading.Thread(target=run_auto_run_random, args=(hd,))
+    event = threading.Event()
+    if flag_case_auto_run_romdon:
+        t = threading.Thread(target=run_auto_run_random, args=(hd, event,))
         t.start()
-
+    else:
+        event.set()
 
 def run_get_death_pic(hd):   # 线程要执行的方法 自动死亡截图
     while flag_case_death_pic:
@@ -142,6 +146,7 @@ def case_auto_run_random():                            # 自动跑路
     global flag_case_auto_run_romdon
     global pos_case_train_skill_normal
     if flag_case_auto_run_romdon:
+        auto_run_random(hd_list[0])
         flag_case_auto_run_romdon = False
         print('auto_run_random关闭')
     else:

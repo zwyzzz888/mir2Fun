@@ -348,7 +348,7 @@ pos_randomX = [504, 601, 622, 588, 501, 407, 391, 415]
 pos_randomY = [233, 281, 358, 416, 432, 404, 350, 277]
 
 
-def auto_run_random(hwnd):
+def auto_run_random(hwnd, event):
    rect = win32gui.GetWindowRect(hwnd)
    #  选择一个随即方向
    random_number = random.randint(0, 7)
@@ -364,6 +364,8 @@ def auto_run_random(hwnd):
    #  随即走的步数
    step_num = random.randint(15, 40)
    for i in range(step_num):
+    if event.is_set():  # 中断线程用
+        return
     if check_odd_even(i):  # 走两步 一拐弯
         dragCurRight((x, y), hwnd)
     else:
