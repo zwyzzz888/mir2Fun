@@ -218,7 +218,8 @@ def get():
     for h, t in hwnd_title.items():
         if t != "":
             # if t == '夜神模拟器':
-            if t == 'www.15 0o .com' and h == get_foreground_windows():
+            # if t == 'www.15 0o .com' and h == get_foreground_windows():
+            if h == get_foreground_windows():
                 rect = win32gui.GetWindowRect(h)
                 x = rect[0]
                 w = rect[2] - x
@@ -267,8 +268,10 @@ def mouse_move_to_sell(hd):   # 移动鼠标卖东西操作无法后台,使用�
     if hd == win32gui.GetForegroundWindow():
         x, y, w, h = win32gui.GetWindowRect(hd)
         # 318,286  物品位置   359, 358 ok位置
+        # 测试坐标用
+        # getXYinWin(hd)
         pos = win32api.GetCursorPos()
-        print(pos)
+        # print(pos)
         tmp = pos
         mouse_move_and_click(pos)
         time.sleep(0.1)
@@ -279,15 +282,10 @@ def mouse_move_to_sell(hd):   # 移动鼠标卖东西操作无法后台,使用�
         mouse_move_and_click(pos)
         time.sleep(0.1)
         mouse_move_and_click(tmp)  # 恢复鼠标位置
-        print(tmp)
+        # print(tmp)
 
 
 def train_skill_f7(hwnd, pos):
-    # rect = win32gui.GetWindowRect(hwnd)
-    # 鼠标坐标加去指定窗口坐标为鼠标在窗口中的坐标值
-    # move_x = rect[0] + 645
-    # move_y = rect[1] + 335
-    # print(move_x, move_y)
     click_it_key(pos, hwnd, win32con.VK_F7)
 
 
@@ -344,14 +342,22 @@ def get_death_pic(hwnd):
         os._exit(0)
 
 
-pos_randomX = [504, 601, 622, 588, 501, 407, 391, 415]
-pos_randomY = [233, 281, 358, 416, 432, 404, 350, 277]
+# 左边从0点开始转
+# 实在
+# pos_randomX = [504, 621, 642, 608, 501, 387, 371, 415]
+# pos_randomY = [203, 261, 358, 436, 452, 424, 350, 277]
+
+
+# 火炬
+pos_randomX = [515, 562, 564, 565, 515, 465, 466, 468]
+pos_randomY = [256, 276, 318, 353, 357, 365, 319, 285]
 
 
 def auto_run_random(hwnd, event):
    rect = win32gui.GetWindowRect(hwnd)
    #  选择一个随即方向
    random_number = random.randint(0, 7)
+   # print("random_number=" + str(random_number))
    #  TODO 优化随即方式 让移动范围更大
    x = rect[0] + pos_randomX[random_number]
    y = rect[1] + pos_randomY[random_number]
@@ -362,6 +368,7 @@ def auto_run_random(hwnd, event):
    x2 = rect[0] + pos_randomX[random_number]
    y2 = rect[1] + pos_randomY[random_number]
    #  随即走的步数
+   # step_num = random.randint(5, 6)
    step_num = random.randint(15, 40)
    for i in range(step_num):
     if event.is_set():  # 中断线程用
@@ -372,6 +379,7 @@ def auto_run_random(hwnd, event):
     else:
         dragCurRight((x2, y2), hwnd)
     time.sleep(0.8)
+    time.sleep(1.2)
     #  判断下是否要使用随即
     global flag_random
     if bool_run_random(get_current_min()) == 1 and flag_random:  # 当时间的分钟为5的倍数时候,并且标记为True 按6使用随即 同时将标记置为False
