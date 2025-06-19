@@ -1,5 +1,4 @@
 import os
-import sys
 
 from datetime import datetime
 import random
@@ -285,8 +284,8 @@ def mouse_move_to_sell(hd):   # 移动鼠标卖东西操作无法后台,使用�
         # print(tmp)
 
 
-def train_skill_f7(hwnd, pos):
-    click_it_key(pos, hwnd, win32con.VK_F7)
+def train_skill_f7(hwnd, pos, key_value):
+    click_it_key(pos, hwnd, key_value)
 
 
 def train_skill_f8(hwnd, pos):

@@ -1,8 +1,15 @@
 #更新requirements.txt为python313的各个版本的依赖
 
+main.ui qt designer 界面文件
+uioutput.py:main.ui 通过 pyuic5 -o uioutput.py main.ui生成的布局文件
+mainUI.py: 继承uioutput界面逻辑文件,用于启动自定义逻辑,信号绑定槽方法
+
+
 #  打包编译exe
-## pyinstaller  -F -w --version-file my.txt -i .\bitbug_favicon.ico --console --onefile .\mainRun.py --upx-dir D:\pyWorkspace\upx-3.96-win64\
-### 替换自己的upx目录
+## 方式一：pyinstaller  -F -w --version-file my.txt -i .\bitbug_favicon.ico --console --onefile .\mainRun.py --upx-dir D:\pyWorkspace\upx-3.96-win64\
+### 替换自己的upx目录  -w 有窗体，---noconsole 运行时无console，--console 运行时有console 
+## 方式二：pyinstaller mainFun.spec  编辑spec文件 进行打包
+
 
 ## 实现原理
 ### win32gui 操作窗口模拟键鼠操作，使用图片识别，判断状态
