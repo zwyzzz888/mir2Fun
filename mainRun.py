@@ -77,7 +77,7 @@ def auto_pick_nomarl(hd):   # 自动练习技能 诱惑bb之类的
     global flag_case_train_skill_normal
     global key_case_train_skill_normal
     if flag_case_train_skill_normal:
-        time.sleep(0.3)
+        time.sleep(0.25)
         mirFun.train_skill_f7(hd, pos_case_train_skill_normal, key_case_train_skill_normal)
 
 
@@ -208,11 +208,13 @@ def run_someting(key_str):     # 执行方法
         elif key_str in ["Key.f%d" % i for i in range(1, 8)]:
             case_train_skill_nomorl(key_str)
         elif "Key.f8" == key_str:
-            case_train_skill_taoist()
+            # case_train_skill_taoist()
+            return
         elif "Key.esc" == key_str:
             case_auto_pick()
         elif "Key.f11" == key_str:
-            case_auto_death_pic()
+            # case_auto_death_pic()
+            return
         elif "Key.f10" == key_str:
             # case_auto_run_random()
             return
@@ -287,7 +289,7 @@ def init_hd():
         print("窗口已经初始化，要重置窗口请重启程序")
         return
     hd_list = mirFun.get()
-    window.update_status_label('初始化：' + hd_list[0])
+    window.update_status_label('初始化：' + str(hd_list[0]) + "成功")
     print("窗口初始化获取窗口数量:" + str(len(hd_list)))
     # if not windll.shell32.IsUserAnAdmin():
         # 不是管理员就提权

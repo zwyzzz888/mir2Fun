@@ -1,7 +1,7 @@
 
 import traceback
 from PyQt5.QtCore import QDateTime
-from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt5.QtWidgets import QApplication
 
 
 def calculate_refresh_time(main_window):

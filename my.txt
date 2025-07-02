@@ -16,13 +16,13 @@ StringFileInfo(
   [
   StringTable(
     u'040904B0',
-    [StringStruct(u'CompanyName', u'传奇我独行'), # 鼠标悬浮exe会显示
-    StringStruct(u'FileDescription', u'独行传奇帮助工具'),    # 文件说明，鼠标悬浮exe会显示，也会显示在 详细信息-文件说明
+    [StringStruct(u'CompanyName', u'麻辣小鱼'), # 鼠标悬浮exe会显示
+    StringStruct(u'FileDescription', u'麻辣小鱼工具箱'),    # 文件说明，鼠标悬浮exe会显示，也会显示在 详细信息-文件说明
     StringStruct(u'FileVersion', u'1.1.0'), # 没见哪里显示
     StringStruct(u'InternalName', u'SVN'),
-    StringStruct(u'LegalCopyright', u'传奇我独行'), #版权，会显示在 详细信息-版权
-    StringStruct(u'OriginalFilename', u'传奇我独行'), #原始文件名，会显示在 详细信息-原始文件名
-    StringStruct(u'ProductName', u'传奇我独行'),      #产品名称，会显示在 详细信息-产品名称
+    StringStruct(u'LegalCopyright', u'麻辣小鱼'), #版权，会显示在 详细信息-版权
+    StringStruct(u'OriginalFilename', u'麻辣小鱼'), #原始文件名，会显示在 详细信息-原始文件名
+    StringStruct(u'ProductName', u'麻辣小鱼'),      #产品名称，会显示在 详细信息-产品名称
     StringStruct(u'ProductVersion', u'1.1.0')])    #产品版本，会显示在 详细信息-产品版本
   ]),
 VarFileInfo([VarStruct(u'Translation', [2052, 1200])]) # 语言，中文简体

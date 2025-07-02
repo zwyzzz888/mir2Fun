@@ -1,22 +1,27 @@
 # -*- coding: utf-8 -*-
-
+import os
 import sys
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QButtonGroup
+import webbrowser
 
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtWidgets import QButtonGroup
 from uioutput import Ui_MainWindow
 from PyQt5.QtCore import QTimer, QDateTime
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtGui import QClipboard
 
 # 导入时间模块
 from mir2_timer import calculate_refresh_time, update_refresh_time, copy_to_clipboard
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         global main_window_instance
         main_window_instance = self
         super(MainWindow, self).__init__(parent)
+
+        # 设置icon
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(bundle_dir, "favicon.ico")))
+
         self.setupUi(self)  # 加载 UI 文件
 
         # 创建按钮组
@@ -47,6 +52,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer_count.timeout.connect(self.count_retime)
         self.timer_count.start(1000)
 
+        # 连接按钮信号 打开网页
+        self.map_all.clicked.connect(self.openPic)  # type: ignore
+        self.map_biqi.clicked.connect(self.openPic)  # type: ignore
+        self.map_wm.clicked.connect(self.openPic)  # type: ignore
+        self.map_wgd.clicked.connect(self.openPic)  # type: ignore
+        self.map_smz.clicked.connect(self.openPic)  # type: ignore
+        self.map_zm.clicked.connect(self.openPic)  # type: ignore
+        self.map_cyxg.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_andian.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_jiangshi.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_wugong.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_duojiao.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_shouren.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_woma.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_shimu.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_zm.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_chiyue.clicked.connect(self.openPic)  # type: ignore
+        self.map_zones_kulou.clicked.connect(self.openPic)  # type: ignore
+        self.index.clicked.connect(self.openPic)  # type: ignore
+
     def make_ctime(self):
         """记录当前时间"""
         current_time = self.getDate()
@@ -74,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 sec = int(self.custom_time.text())
                 return sec * 1000
             except ValueError:
-                QMessageBox.warning(self, "输入错误", "请输入有效的秒数")
+
                 return 0
 
     def jisuan(self):
@@ -134,6 +159,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def update_status_label(self, text):
         """基础功能页-更新状态标签文本"""
         self.label_2.setText(f"<html><head/><body><p><span style=\" color:#55aaff;\">{text}</span></p></body></html>")
+
+
+    def openPic(self):
+        """
+        打开触发控件对应的网页链接。
+        使用系统默认浏览器打开 URL，格式为 https://mir2.malafish.cn/{id}
+        """
+        sender = self.sender()
+        if not sender:
+            return
+
+        map_id = sender.objectName()  # 获取触发信号的控件 ID
+        url = f"https://mir2.malafish.cn/{map_id}"
+        webbrowser.open(url)  # 使用系统默认浏览器打开网页
 
 
 if __name__ == "__main__":

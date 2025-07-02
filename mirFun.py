@@ -6,7 +6,7 @@ import win32api
 import win32gui
 import win32ui
 import win32con
-import aircv as ac
+
 from ctypes import windll
 import time
 
@@ -139,12 +139,14 @@ def match_img(imgsrc, imgobj, confidence):  # imgsrc=原始图像，imgobj=待�
     """
     :rtype: object
     """
-    imsrc = ac.imread(imgsrc)
-    imobj = ac.imread(imgobj)
-    match_result = ac.find_template(imsrc, imobj, confidence)
-    if match_result is not None:
-        match_result['shape'] = (imsrc.shape[1], imsrc.shape[0])  # 0为高，1为宽
-    return match_result
+    # TODO 注释掉了打包让体积更小
+    # imsrc = ac.imread(imgsrc)
+    # imobj = ac.imread(imgobj)
+    # match_result = ac.find_template(imsrc, imobj, confidence)
+    # if match_result is not None:
+    #     match_result['shape'] = (imsrc.shape[1], imsrc.shape[0])  # 0为高，1为宽
+    # return match_result
+    return 0
 
 
 def window_capture(filename, hd):
@@ -315,11 +317,16 @@ def train_skill_f8(hwnd, pos):
         click_it_double((move_x, move_y), hwnd)
         click_it((move_x, move_y), hwnd)
     imagePath2 = "./pic/" + "kulou.png"
-    res2 = match_img(baseImg, imagePath2, 0.8)
-    if res2 is None:
-        print("骷髅没找到")
-        click_it_key(pos, hwnd, win32con.VK_F8)
-    time.sleep(5)
+    try:
+        res2 = match_img(baseImg, imagePath2, 0.8)
+        if res2 is None:
+            print("骷髅没找到")
+            click_it_key(pos, hwnd, win32con.VK_F8)
+        time.sleep(5)
+    except:
+        print("/pic/kulou.png 不存在")
+        pass
+
 
 
 def get_death_pic(hwnd):
