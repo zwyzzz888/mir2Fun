@@ -11,6 +11,13 @@ mainUI.py: 继承uioutput界面逻辑文件,用于启动自定义逻辑,信号�
 ## 方式二：pyinstaller mainFun.spec  编辑spec文件 进行打包
 
 
+尝试使用Nuitka打包
+python -m nuitka --msvc=latest --standalone --onefile --windows-console-mode=disable --windows-icon-from-ico=favicon.ico  --output-dir=dist --include-module=requests --include-module=win32gui --enable-plugin=pyqt5  --enable-plugin=numpy --include-module=PyQt5 --include-module=PyQt5.QtWidgets --include-module=PyQt5.QtGui --include-module=PyQt5.QtCore --include-data-files=favicon.ico=favicon.ico --company-name="malafish" --product-name="malafish-tools" --file-description="malafish-tools" --file-version=1.1.1 --product-version=1.1.1 --copyright="malafish" --trademarks="malafish" mainRun.py
+
+
+python -m nuitka --msvc=latest --standalone --onefile  --windows-icon-from-ico=favicon.ico  --output-dir=dist --include-module=requests --include-module=win32gui --enable-plugin=pyqt5  --enable-plugin=numpy --include-module=PyQt5 --include-module=PyQt5.QtWidgets --include-module=PyQt5.QtGui --include-module=PyQt5.QtCore --include-data-files=favicon.ico=favicon.ico --company-name="malafish" --product-name="malafish-tools" --file-description="malafish-tools" --file-version=1.1.0 --product-version=1.1.0 --copyright="malafish" --trademarks="malafish" mainRun.py
+
+
 ## 实现原理
 ### win32gui 操作窗口模拟键鼠操作，使用图片识别，判断状态
 
@@ -21,5 +28,7 @@ mainUI.py: 继承uioutput界面逻辑文件,用于启动自定义逻辑,信号�
     alt + esc 自动显示物品，拾取物品，其实就是不停的按esc，如果组队的时候需要临时关闭，再按次就关闭，以下同理
     alt + f1-7  自动训练技能，鼠标指向需要释放的地方，按下即可，再按停止，只能适合诱惑等技能，不适合道士需要换符的技能
     alt + f8  (启动时窗口需要在前台)自动训练道士换符技能，同上技能设置为f8，打开包裹，包裹里面装好符
-    alt + m  (启动时窗口需要在前台)自动卖、存、修 物品， 点开卖、修、仓库保管窗口后，鼠标指向物品 按快捷键即可
+    alt + m  快速卖、存、修 物品： 点开卖、修、仓库保管窗口后，鼠标指向物品 按快捷键即可 (启动时窗口需要在前台)
+    alt + b  快速交易：打开交易窗口后，鼠标指向物品 按快捷键即可 (启动时窗口需要在前台)
     alt + f10 随机行走(可以后台)
+    

@@ -1,8 +1,9 @@
 
 import threading
 import sys
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
 
+import httputils
 import mainUI
 from pynput import keyboard
 import time
@@ -32,6 +33,12 @@ def case_sell_or_save():                            # 自动卖东西
     print('sell_or_save')
     for hd in hd_list:
         mirFun.mouse_move_to_sell(hd)
+
+
+def case_trade():                    # 快速交易
+    print('trade')
+    for hd in hd_list:
+        mirFun.mouse_move_to_trade(hd)
 
 
 def auto_pick(hd):    # 自动拾取
@@ -208,7 +215,7 @@ def run_someting(key_str):     # 执行方法
         elif key_str in ["Key.f%d" % i for i in range(1, 8)]:
             case_train_skill_nomorl(key_str)
         elif "Key.f8" == key_str:
-            # case_train_skill_taoist()
+            case_train_skill_taoist()
             return
         elif "Key.esc" == key_str:
             case_auto_pick()
@@ -220,6 +227,8 @@ def run_someting(key_str):     # 执行方法
             return
         elif "'x'" == key_str:
             case_off()
+        elif "'b'" == key_str:
+            case_trade()
     elif "Key.f12" == key_str:
         init_hd()
 
@@ -296,7 +305,6 @@ def init_hd():
         # windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
 
 
-
 def custom_logic():
     for hd in hd_list:
         auto_pick(hd)
@@ -306,11 +314,30 @@ def custom_logic():
 
 
 # 自定义循环函数用于自动练技能和自动捡东西
+thread_list = []
+
+
 def custom_loop():
+    # 启动后台线程执行循环逻辑
+    for target in [loop_pick, loop_pick_normal]:
+        thread = threading.Thread(target=target, daemon=True)
+        thread.start()
+        thread_list.append(thread)
+
+
+def loop_pick():
     while True:
         time.sleep(0.02)  # 缓冲0.02s
         for hd in hd_list:
             auto_pick(hd)
+            # auto_pick_shidao(hd)
+        pass
+
+
+def loop_pick_normal():
+    while True:
+        time.sleep(0.02)  # 缓冲0.02s
+        for hd in hd_list:
             auto_pick_nomarl(hd)
             # auto_pick_shidao(hd)
         pass
@@ -319,7 +346,9 @@ if __name__ == '__main__':
     # 启动按键监听
     listen_key_nblock()
 
-    # 启动 PyQt5 窗口
+    # 启动 PyQt5 窗口  适配高dpi缩放
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
     app = QtWidgets.QApplication(sys.argv)  # 创建应用程序实例
     window = mainUI.MainWindow()  # 创建主窗口实例
     window.show()  # 显示窗口
@@ -336,9 +365,9 @@ if __name__ == '__main__':
     print("alt + f8  5s换一次符，设置为f8，打开包裹，包裹里面装好符，物品窗口拖动到右边，点开人物窗口再关闭，配合f7使用")
     print("alt + m  (启动时窗口需要在前台)自动卖、存、修 物品， 点开卖、修、仓库保管窗口后，鼠标指向物品 按快捷键即可")
     print("alt + f10 随机行走(可以后台)")
-    # 启动后台线程执行循环逻辑
-    loop_thread = threading.Thread(target=custom_loop, daemon=True)
-    loop_thread.start()
+    httputils.run_login_count_in_thread()
+
+    custom_loop()  # 启动后台线程执行循环逻辑
     sys.exit(app.exec_())  # 正常运行应用程序事件循环
 
 

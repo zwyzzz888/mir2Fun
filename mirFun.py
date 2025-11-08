@@ -1,14 +1,23 @@
+import ctypes
+from ctypes.wintypes import POINT  # 导入 POINT 类型
 import os
-
+# from ctypes import Structure, c_long, c_char, c_uint, c_short, c_ushort, c_ulong
 from datetime import datetime
 import random
+
+import aircv as ac
 import win32api
 import win32gui
 import win32ui
 import win32con
-
-from ctypes import windll
 import time
+
+# 初始化 DPI 感知
+try:
+    ctypes.windll.user32.SetProcessDPIAware()
+except AttributeError:
+    # 对于不支持 SetProcessDPIAware 的系统（如 Windows XP），忽略该错误
+    pass
 
 flag_random = True
 
@@ -118,7 +127,7 @@ def click_it_a(pos, hd):
 
 
 def moveCurPos(x, y):  # 移动鼠标
-    windll.user32.SetCursorPos(x, y)
+    ctypes.windll.user32.SetCursorPos(x, y)
 
 
 def getCurPos():  # 获得鼠标位置信息，这个再实际代码没用上，调试用得上
@@ -140,13 +149,12 @@ def match_img(imgsrc, imgobj, confidence):  # imgsrc=原始图像，imgobj=待�
     :rtype: object
     """
     # TODO 注释掉了打包让体积更小
-    # imsrc = ac.imread(imgsrc)
-    # imobj = ac.imread(imgobj)
-    # match_result = ac.find_template(imsrc, imobj, confidence)
-    # if match_result is not None:
-    #     match_result['shape'] = (imsrc.shape[1], imsrc.shape[0])  # 0为高，1为宽
-    # return match_result
-    return 0
+    imsrc = ac.imread(imgsrc)
+    imobj = ac.imread(imgobj)
+    match_result = ac.find_template(imsrc, imobj, confidence)
+    if match_result is not None:
+        match_result['shape'] = (imsrc.shape[1], imsrc.shape[0])  # 0为高，1为宽
+    return match_result
 
 
 def window_capture(filename, hd):
@@ -173,6 +181,36 @@ def window_capture(filename, hd):
     saveBitMap.SaveBitmapFile(saveDC, filename)
     win32gui.DeleteObject(saveBitMap.GetHandle())
     saveDC.DeleteDC()
+
+
+def get_window_monitor_scaling(hwnd):
+    """获取指定窗口所在显示器的缩放比例（DPI）"""
+    # 获取窗口位置和大小
+    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    center_x = (left + right) // 2
+    center_y = (top + bottom) // 2
+
+    # 创建 POINT 结构体并填充数据
+    point = POINT(center_x, center_y)
+
+    # 获取窗口所在的显示器
+    monitor = ctypes.windll.user32.MonitorFromPoint(
+        point,  # 使用 POINT 结构体
+        2  # MONITOR_DEFAULTTONEAREST
+    )
+    if not monitor:
+        raise RuntimeError('无法获取显示器信息')
+
+    # 获取显示器的 DPI
+    dpi_x = ctypes.c_uint()
+    dpi_y = ctypes.c_uint()
+    ctypes.windll.shcore.GetDpiForMonitor(monitor, 0, ctypes.byref(dpi_x), ctypes.byref(dpi_y))
+
+    # 计算缩放比例
+    scaling_x = dpi_x.value / 96.0
+    scaling_y = dpi_y.value / 96.0
+
+    return (scaling_x + scaling_y) / 2
 
 
 def window_capture_small(filename, hd):
@@ -266,9 +304,11 @@ def mouse_move_and_click(pos):  # 前台移动鼠标
 
 
 def mouse_move_to_sell(hd):   # 移动鼠标卖东西操作无法后台,使用前台命令
+    pos_sell = [316, 291] # 物品位置
+    pos_ok = [316 + 42, 291 + 65] # ok位置
+    scaling = get_window_monitor_scaling(hd)
     if hd == win32gui.GetForegroundWindow():
         x, y, w, h = win32gui.GetWindowRect(hd)
-        # 318,286  物品位置   359, 358 ok位置
         # 测试坐标用
         # getXYinWin(hd)
         pos = win32api.GetCursorPos()
@@ -276,10 +316,29 @@ def mouse_move_to_sell(hd):   # 移动鼠标卖东西操作无法后台,使用�
         tmp = pos
         mouse_move_and_click(pos)
         time.sleep(0.1)
-        pos = x + 316, y + 291
+        pos = x + round(pos_sell[0]*scaling), y + round(pos_sell[1]*scaling)
         mouse_move_and_click(pos)
         time.sleep(0.1)
-        pos = x + 316 + 42, y + 291 + 65
+        pos = x + round(pos_ok[0]*scaling), y + round(pos_ok[1]*scaling)
+        mouse_move_and_click(pos)
+        time.sleep(0.1)
+        mouse_move_and_click(tmp)  # 恢复鼠标位置
+        # print(tmp)
+
+
+def mouse_move_to_trade(hd):   # 移动鼠标交易操作无法后台,使用前台命令
+    pos_sell = [716, 262] # 交易框位置
+    scaling = get_window_monitor_scaling(hd)
+    if hd == win32gui.GetForegroundWindow():
+        x, y, w, h = win32gui.GetWindowRect(hd)
+        # #测试坐标用
+        # getXYinWin(hd)
+        pos = win32api.GetCursorPos()
+        # print(pos)
+        tmp = pos
+        mouse_move_and_click(pos)
+        time.sleep(0.1)
+        pos = x + round(pos_sell[0]*scaling), y + round(pos_sell[1]*scaling)
         mouse_move_and_click(pos)
         time.sleep(0.1)
         mouse_move_and_click(tmp)  # 恢复鼠标位置
@@ -327,6 +386,73 @@ def train_skill_f8(hwnd, pos):
         print("/pic/kulou.png 不存在")
         pass
 
+# def get_current_gamma_ramp():
+#     """
+#     获取当前屏幕的伽马值
+#     返回: (red_gamma, green_gamma, blue_gamma) 的元组
+#     """
+#     # 创建空数组用于存储当前伽马值
+#     gamma_array = (ctypes.c_ushort * 768)()
+#
+#     # 获取当前伽马值
+#     ctypes.windll.gdi32.GetDeviceGammaRamp(ctypes.windll.user32.GetDC(0), gamma_array)
+#
+#     # 将伽马值转换为numpy数组便于处理
+#     gamma = numpy.array(gamma_array)
+#
+#     # 分离RGB通道
+#     r = gamma[0:256]
+#     g = gamma[256:512]
+#     b = gamma[512:768]
+#
+#     # 计算每个通道的伽马值(近似)
+#     def calculate_gamma(channel):
+#         # 找到中间值(避免极端值影响)
+#         mid = channel[128]
+#         if mid == 0:
+#             return 1.0
+#         return (mid / (128 * 256)) ** (-1)
+#
+#     return (calculate_gamma(r), calculate_gamma(g), calculate_gamma(b))
+
+
+def set_current_gamma_ramp(red=1.0, green=1.0, blue=1.0, brightness=1.0):
+    """
+    设置屏幕伽马值和亮度
+    :param red: 红色通道伽马值 (建议0.1-3.0)
+    :param green: 绿色通道伽马值 (建议0.1-3.0)
+    :param blue: 蓝色通道伽马值 (建议0.1-3.0)
+    :param brightness: 整体亮度系数 (0.0-1.0)
+    """
+    # 创建伽马数组
+    gamma_array = (ctypes.c_ushort * 768)()
+    # 获取屏幕设备上下文
+    # hdc = ctypes.windll.gdi32.CreateDCW(ctypes.c_wchar_p("DISPLAY"), None, None, None)
+    hdc = ctypes.windll.user32.GetDC(None)
+    if hdc == 0:
+        raise RuntimeError("无法获取设备上下文")
+
+    print(hdc)
+    # 填充伽马数组
+    for i in range(256):
+        # 应用伽马校正和亮度调整
+        gamma_array[i] = min(65535, max(0, int((i / 255.0) ** (1.0 / red) * 65535 * brightness)))
+        gamma_array[i + 256] = min(65535, max(0, int((i / 255.0) ** (1.0 / green) * 65535 * brightness)))
+        gamma_array[i + 512] = min(65535, max(0, int((i / 255.0) ** (1.0 / blue) * 65535 * brightness)))
+
+    # 调用Windows API设置伽马值
+    # result = ctypes.windll.gdi32.SetDeviceGammaRamp(hdc, ctypes.byref(gamma_array))
+    # 尝试设置主显示器的伽马值
+    success = ctypes.windll.gdi32.SetDeviceGammaRamp(hdc, ctypes.byref(gamma_array))
+
+    # 清理设备上下文
+    ctypes.windll.user32.ReleaseDC(None, hdc)
+
+    if not success:
+        raise RuntimeError("无法设置伽马值，可能不支持多显示器配置")
+
+    # # 清理设备上下文
+    # ctypes.windll.gdi32.DeleteDC(hdc)
 
 
 def get_death_pic(hwnd):
