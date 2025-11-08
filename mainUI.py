@@ -59,8 +59,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer_count.start(1000)
 
         # 连接按钮信号 设置屏幕伽马值
-        self.bt_on_gama.clicked.connect(lambda: self.handle_gamma_ramp(lambda: mirFun.set_current_gamma_ramp(red=2.0, green=2.0, blue=2.0)))
-        self.bt_off_gama.clicked.connect(lambda: self.handle_gamma_ramp(lambda: mirFun.set_current_gamma_ramp(red=1.0, green=1.0, blue=1.0)))
+        # self.bt_on_gama.clicked.connect(lambda: self.handle_gamma_ramp(lambda: mirFun.set_current_gamma_ramp(red=2.0, green=2.0, blue=2.0)))
+        # self.bt_off_gama.clicked.connect(lambda: self.handle_gamma_ramp(lambda: mirFun.set_current_gamma_ramp(red=1.0, green=1.0, blue=1.0)))
 
 
         # 连接按钮信号 打开网页
@@ -93,7 +93,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.make_ctime()
 
         # 隐藏自己
-        self.qidaiframe.mouseDoubleClickEvent = self.hide_qidaiframe
+        # self.qidaiframe.mouseDoubleClickEvent = self.hide_qidaiframe
 
     def hide_qidaiframe(self, event):
         self.qidaiframe.hide()

@@ -26,7 +26,7 @@
    <enum>Qt::DefaultContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>麻辣小鱼的mir2工具箱(实在专属)-qq271470817</string>
+   <string>麻辣小鱼的mir2工具箱-qq271470817</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -101,59 +101,6 @@
                                             color:#55aaff;&quot;&gt;提示在这里&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="bt_on_gama">
-         <property name="geometry">
-          <rect>
-           <x>340</x>
-           <y>340</y>
-           <width>111</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>亮屏（实在专用）</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="bt_off_gama">
-         <property name="geometry">
-          <rect>
-           <x>340</x>
-           <y>360</y>
-           <width>75</width>
-           <height>23</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>亮屏恢复</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="qidaiframe">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>451</width>
-           <height>391</height>
-          </rect>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background:#FFFFFF;</string>
-         </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;敬请期待&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-        <zorder>bt_off_gama</zorder>
-        <zorder>label</zorder>
-        <zorder>label_2</zorder>
-        <zorder>bt_on_gama</zorder>
-        <zorder>qidaiframe</zorder>
        </widget>
        <widget class="QWidget" name="tab_2">
         <property name="enabled">
