@@ -14,7 +14,7 @@ from uioutput import Ui_MainWindow
 from PyQt5.QtCore import QTimer, QDateTime, QUrl
 
 # 导入时间模块
-from mir2_timer import calculate_refresh_time, update_refresh_time, copy_to_clipboard
+from mir2_timer import calculate_refresh_time, update_refresh_time, copy_to_clipboard, replace_numbers_to_chinese
 
 gama_off = 1.0, 1.0, 1.0
 gama_on = 2.0, 2.0, 2.0
@@ -92,6 +92,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.load_image()
         self.make_ctime()
 
+        # 隐藏自己
+        self.qidaiframe.mouseDoubleClickEvent = self.hide_qidaiframe
+
+    def hide_qidaiframe(self, event):
+        self.qidaiframe.hide()
+
     def handle_gamma_ramp(self, func):
         try:
             func()  # 执行传入的函数
@@ -100,6 +106,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             with open("log.txt", "a") as log_file:
                 log_file.write(f"Error: {str(e)}\n")
             print(f"捕获到异常: {str(e)}")  # 可选：控制台输出异常信息
+            self.update_status_label(str(e))
 
     def load_image(self):
         url = QUrl()
@@ -107,7 +114,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         request = QNetworkRequest()
         request.setUrl(url)
         self.net_manager.get(request)
-
 
     def on_image_loaded(self, reply):
         # 检查是否有错误
@@ -162,7 +168,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             result = calculate_refresh_time(self)
             self.re_time = self.id_tv_time.text()
             self.result.setText(result['str'])
-            copy_to_clipboard(result['str'])
+            copy_to_clipboard(replace_numbers_to_chinese(result['str']))
         except Exception as e:
             print("Error in jisuan:", e)
             import traceback

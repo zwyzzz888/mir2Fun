@@ -39,6 +39,39 @@ def update_refresh_time(main_window):
         traceback.print_exc()
 
 
+def replace_numbers_to_chinese(text):
+    """
+    将文本中的数字转换为全角数字，并替换特定关键词
+    """
+    number_map = {
+        '0': '０',
+        '1': '１',
+        '2': '２',
+        '3': '３',
+        '4': '４',
+        '5': '５',
+        '6': '６',
+        '7': '７',
+        '8': '８',
+        '9': '９',
+    }
+
+    word_map = {
+        '下次刷新时间约为': '刷新时间为',
+        '距离刷新还有': '还有'
+    }
+
+    # 先替换汉字关键词
+    replaced_text = text
+    for key, value in word_map.items():
+        replaced_text = replaced_text.replace(key, value)
+
+    # 再替换数字为全角数字
+    result = ''.join(number_map.get(char, char) for char in replaced_text)
+
+    return result
+
+
 def copy_to_clipboard(text):
     """复制文本到剪贴板"""
     clipboard = QApplication.clipboard()  # 获取系统剪贴板
