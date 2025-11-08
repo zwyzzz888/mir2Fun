@@ -106,8 +106,10 @@ def click_key(hd, key):
 def click_key_esc(hd):
     handle = hd
     win32gui.PostMessage(handle, win32con.WM_ACTIVATE, win32con.WA_ACTIVE, 0)
-    win32gui.PostMessage(handle, win32con.WM_KEYDOWN, win32con.VK_ESCAPE, 0)
-    win32gui.PostMessage(handle, win32con.WM_KEYUP, win32con.VK_ESCAPE, 0)
+    # win32gui.PostMessage(handle, win32con.WM_KEYDOWN, win32con.VK_ESCAPE, 0)
+    win32gui.PostMessage(handle, win32con.WM_KEYDOWN, 0xC0, 0)
+    win32gui.PostMessage(handle, win32con.WM_KEYUP, 0xC0, 0)
+    # win32gui.PostMessage(handle, win32con.WM_KEYUP, win32con.VK_ESCAPE, 0)
 
 
 def click_key_prtsc(hd):
